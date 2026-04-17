@@ -265,6 +265,7 @@
         result.style.color = '#e67e00';
         result.textContent = '💡 Here are the correct answers.';
         cells.forEach(cell => {
+          cell.classList.remove('selected');
           if (cell.dataset.correct === 'true') {
             cell.classList.add('reveal-correct');
           }
