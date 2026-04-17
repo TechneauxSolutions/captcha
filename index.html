@@ -2,92 +2,278 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Logo CAPTCHA</title>
 <style>
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
   body {
     font-family: Arial, sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 30px;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
     background: #f7f7f7;
+    margin: 0;
   }
-  h2 {
-    margin-bottom: 20px;
+
+  .captcha-box {
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 16px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   }
+
+  .captcha-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .captcha-header .icon {
+    font-size: 28px;
+  }
+
+  .captcha-header h2 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+    line-height: 1.3;
+  }
+
   .captcha-grid {
     display: grid;
-    grid-template-columns: repeat(3, 150px);
-    grid-gap: 15px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
   }
-  .captcha-grid img {
-    width: 150px;
-    height: 150px;
+
+  .captcha-cell {
+    position: relative;
+    aspect-ratio: 1;
     cursor: pointer;
-    border: 3px solid transparent;
-    border-radius: 10px;
-    transition: border 0.2s;
+    overflow: hidden;
   }
-  .captcha-grid img.selected {
-    border: 3px solid #4CAF50;
+
+  .captcha-cell img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #f9f9f9;
+    display: block;
+    padding: 10px;
+    transition: opacity 0.15s;
+    user-select: none;
+    -webkit-user-drag: none;
   }
-  button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
+
+  .captcha-cell .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(66, 133, 244, 0.35);
+    opacity: 0;
+    transition: opacity 0.15s;
+    pointer-events: none;
   }
+
+  .captcha-cell .checkmark {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    width: 26px;
+    height: 26px;
+    background: #4285f4;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.15s;
+    pointer-events: none;
+  }
+
+  .captcha-cell .checkmark svg {
+    width: 14px;
+    height: 14px;
+    fill: white;
+  }
+
+  .captcha-cell.selected .overlay {
+    opacity: 1;
+  }
+
+  .captcha-cell.selected .checkmark {
+    opacity: 1;
+  }
+
+  .captcha-cell.selected img {
+    outline: 3px solid #4285f4;
+  }
+
+  .captcha-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 12px;
+    gap: 10px;
+  }
+
   .result {
-    margin-top: 15px;
+    font-size: 14px;
     font-weight: bold;
+    flex: 1;
+    min-height: 20px;
+  }
+
+  button {
+    padding: 10px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    background: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    transition: background 0.2s;
+    touch-action: manipulation;
+  }
+
+  button:hover {
+    background: #3367d6;
+  }
+
+  button:active {
+    background: #2a56c6;
+  }
+
+  .captcha-cell.reveal-correct img {
+    outline: 3px solid #e67e00;
+  }
+  .captcha-cell.reveal-correct .overlay {
+    opacity: 1;
+    background: rgba(230, 126, 0, 0.3);
+  }
+  .captcha-cell.reveal-correct .checkmark {
+    opacity: 1;
+    background: #e67e00;
+  }
+  button:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+  }
+
+  .captcha-branding {
+    text-align: center;
+    font-size: 10px;
+    color: #aaa;
+    margin-top: 8px;
+    letter-spacing: 0.5px;
   }
 </style>
 </head>
 <body>
 
-<h2>Select all logos of local organizations</h2>
+<div class="captcha-box">
+  <div class="captcha-header">
+    <h2>Select all logos of tech companies in Acadiana</h2>
+  </div>
 
-<div class="captcha-grid">
-  <img src="https://i.imgur.com/TeBMAdZ.png" data-correct="true" alt="techneaux">
-  <img src="https://i.imgur.com/FGIfaFX.png" data-correct="false" alt="plaid">
-  <img src="https://i.imgur.com/XjsFKaw.png" data-correct="true" alt="schoolmint">
-  <img src="https://i.imgur.com/1QMrpR5.png" data-correct="true" alt="opportunity machine">
-  <img src="https://i.imgur.com/VA7zHSA.png" data-correct="false" alt="retool">
-  <img src="https://i.imgur.com/y2D3gjH.png" data-correct="true" alt="cgi">
-  <img src="https://i.imgur.com/Ex3z4C1.png" data-correct="true" alt="lft">
-  <img src="https://i.imgur.com/Ix2Ui85.png" data-correct="true" alt="s1">
-  <img src="https://i.imgur.com/4N3Umqf.png" data-correct="false" alt="snowflake">
+  <div class="captcha-grid" id="grid">
+    <!-- JS will shuffle and render cells -->
+  </div>
+
+  <div class="captcha-footer">
+    <div class="result" id="result"></div>
+    <button onclick="checkCaptcha()">Verify</button>
+  </div>
+  <div class="captcha-branding">CAPTCHA · Acadiana Tech</div>
 </div>
 
-<button onclick="checkCaptcha()">Verify</button>
-<div class="result" id="result"></div>
-
 <script>
-  const images = document.querySelectorAll('.captcha-grid img');
-  images.forEach(img => {
-    img.addEventListener('click', () => {
-      img.classList.toggle('selected');
+  const logos = [
+    { src: "https://i.imgur.com/TeBMAdZ.png", alt: "Techneaux", correct: true },
+    { src: "https://i.imgur.com/Ix2Ui85.png", alt: "S1 Technology", correct: true },
+    { src: "https://i.imgur.com/y2D3gjH.png", alt: "CGI", correct: true },
+    { src: "https://i.imgur.com/XjsFKaw.png", alt: "SchoolMint", correct: true },
+    { src: "https://i.imgur.com/PReBcon.png", alt: "Nexus ACS", correct: true },
+    { src: "https://i.imgur.com/fK70KJY.png", alt: "Byte Refactory", correct: true },
+    { src: "https://i.imgur.com/VA7zHSA.png", alt: "Retool", correct: false },
+    { src: "https://i.imgur.com/FGIfaFX.png", alt: "Plaid", correct: false },
+    { src: "https://i.imgur.com/4N3Umqf.png", alt: "Snowflake", correct: false },
+  ];
+
+  // Shuffle
+  for (let i = logos.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [logos[i], logos[j]] = [logos[j], logos[i]];
+  }
+
+  const grid = document.getElementById('grid');
+
+  logos.forEach((logo, idx) => {
+    const cell = document.createElement('div');
+    cell.className = 'captcha-cell';
+    cell.dataset.correct = logo.correct;
+
+    cell.innerHTML = `
+      <img src="${logo.src}" alt="${logo.alt}" draggable="false">
+      <div class="overlay"></div>
+      <div class="checkmark">
+        <svg viewBox="0 0 12 10" xmlns="http://www.w3.org/2000/svg">
+          <polyline points="1,5 4.5,9 11,1" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    `;
+
+    cell.addEventListener('click', () => {
+      cell.classList.toggle('selected');
+      // Clear result on interaction
+      document.getElementById('result').textContent = '';
     });
+
+    grid.appendChild(cell);
   });
 
+  let failedAttempts = 0;
+
   function checkCaptcha() {
+    const cells = document.querySelectorAll('.captcha-cell');
     let correct = true;
-    images.forEach(img => {
-      const isSelected = img.classList.contains('selected');
-      const isCorrect = img.getAttribute('data-correct') === 'true';
-      if (isSelected !== isCorrect) {
-        correct = false;
-      }
+    cells.forEach(cell => {
+      const isSelected = cell.classList.contains('selected');
+      const isCorrect = cell.dataset.correct === 'true';
+      if (isSelected !== isCorrect) correct = false;
     });
 
     const result = document.getElementById('result');
     if (correct) {
       result.style.color = 'green';
-      result.textContent = 'CAPTCHA passed ✅';
+      result.textContent = '✅ Verified! Welcome to the conference.';
+      cells.forEach(cell => cell.classList.remove('reveal-correct'));
     } else {
-      result.style.color = 'red';
-      result.textContent = 'CAPTCHA failed ❌. Try again.';
+      failedAttempts++;
+      if (failedAttempts >= 3) {
+        result.style.color = '#e67e00';
+        result.textContent = '💡 Here are the correct answers.';
+        cells.forEach(cell => {
+          if (cell.dataset.correct === 'true') {
+            cell.classList.add('reveal-correct');
+          }
+        });
+        document.querySelector('button').disabled = true;
+      } else {
+        result.style.color = 'red';
+        result.textContent = `❌ Incorrect. ${3 - failedAttempts} attempt${3 - failedAttempts === 1 ? '' : 's'} remaining.`;
+      }
     }
   }
 </script>
